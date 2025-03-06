@@ -28,18 +28,35 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ message: "Login successful", token });
+    const token = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const logout = (req, res) => {
-  const token = req.header("Authorization")?.split(" ")[1];
+const blacklistedTokens = new Set(); // Store invalidated tokens (in-memory)
+
+export const logoutUser = async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return res.status(400).json({ message: "No token provided" });
 
-  blacklistToken(token);
-  res.json({ message: "Logged out successfully" });
+  blacklistedTokens.add(token);
+  res.json({ message: "Logout successful" });
 };
+
+export const isTokenBlacklisted = (token) => blacklistedTokens.has(token);
