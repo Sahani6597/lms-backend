@@ -2,10 +2,11 @@ import express from "express";
 import dotenv from "dotenv"
 import cors from "cors";
 import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/UserRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import guideRoutes from "./routes/guideRoutes.js";
-
+import enrollments from "./routes/enrollments.js";
+import quizRoute from "./routes/quizRoute.js";
 // Load environment variables
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use(cors());
 app.use("/api/users", userRoutes);
 app.use("/api/guide",guideRoutes);
 app.use("/api/", courseRoutes);
+app.use("/api/", enrollments);
+app.use("/api/",quizRoute)
 
 // Basic route
 app.get("/", (req, res) => {

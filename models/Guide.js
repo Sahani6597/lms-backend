@@ -6,6 +6,10 @@ const GuideSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  instructor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   topic: {
     type: String,
     required: true
